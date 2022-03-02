@@ -12,7 +12,8 @@ class QualityWatcher {
 
   constructor(options: QualityWatcherOptions) {
     this.options = options;
-    this.url = process.env.QUALITYWATCHER_AUTOMATION_URL;
+    this.url =
+      "https://api.qualitywatcher.com/prod/nimble/v1/test-runner/add-automated-test-execution";
   }
 
   public async publishResults(payload: QualityWatcherPayload) {
