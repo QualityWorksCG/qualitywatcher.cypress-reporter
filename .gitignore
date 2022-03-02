@@ -3,3 +3,5 @@ cypress
 cypress.json
 lib
 node_modules
+Reports
+scripts.*

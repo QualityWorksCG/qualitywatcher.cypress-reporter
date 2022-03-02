@@ -4,7 +4,7 @@ import colors from "colors/safe";
 export const logger = (message) => {
   let messageOut =
     message instanceof Object ? stringify(message, null, 2) : message;
-  console.log(`${colors.cyan("[qualitywatcher]")} ${messageOut}`);
+  console.log(`  ${messageOut}`);
 };
 
 export const msToTime = (ms) => {
@@ -16,4 +16,17 @@ export const msToTime = (ms) => {
   else if (minutes < 60) return minutes + "m";
   else if (hours < 24) return hours + "h";
   else return days + "d";
+};
+
+export const getBrowserInfo = (testResults) => {
+  const { browserName, browserVersion, osName, osVersion, cypressVersion } =
+    testResults;
+
+  return `
+
+**Browser Info:**
+
+-----
+> ${browserName}(${browserVersion}) on ${osName}(${osVersion})
+> Cypress: ${cypressVersion}`;
 };
