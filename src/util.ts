@@ -1,5 +1,4 @@
 import stringify from "fast-safe-stringify";
-import colors from "colors/safe";
 
 export const logger = (message) => {
   let messageOut =

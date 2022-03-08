@@ -22,7 +22,6 @@ export interface QualityWatcherPayload {
 
 export interface QualityWatcherOptions {
   url: string;
-  username: string;
   password: string;
   projectId: number;
 }

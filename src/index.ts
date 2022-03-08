@@ -43,10 +43,6 @@ function checkForEnvironmentalVariables() {
     missingEnvVars.push("QUALITYWATCHER_API_KEY");
   }
 
-  if (!process.env.QUALITYWATCHER_USERNAME) {
-    missingEnvVars.push("QUALITYWATCHER_USERNAME");
-  }
-
   if (missingEnvVars?.length > 0) {
     const errorMessage = `Missing environmental variable/s: ${missingEnvVars.join(
       ", "
@@ -127,7 +123,6 @@ export const report = (
     });
 
     const qualityWatcherOptions = {
-      username: process.env.QUALITYWATCHER_USERNAME,
       password: process.env.QUALITYWATCHER_API_KEY,
       projectId: reporterOptions?.projectId,
       url: reporterOptions?.url,
