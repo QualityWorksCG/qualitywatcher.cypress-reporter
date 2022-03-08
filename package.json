@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "npx tsc",
-    "test": "npm run build && cypress run",
+    "test:local": "npm run build && cypress run",
     "test:mocha": "npm run build && mocha",
     "release": "np"
   },
