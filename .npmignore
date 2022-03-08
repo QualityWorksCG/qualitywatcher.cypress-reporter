@@ -9,3 +9,4 @@ scripts.*
 tsconfig.json
 src
 test
+qualitywatcher-cypress-reporter-*
