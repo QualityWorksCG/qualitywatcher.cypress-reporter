@@ -8,9 +8,26 @@ Publishes [Cypress](https://www.cypress.io/) runs on QualityWatcher.
 $ npm install @qualitywatcher/cypress-reporter --save-dev
 ```
 
+or
+
+```shell
+yarn add -D @qualitywatcher/cypress-reporter
+```
+
 ## Usage
 
 1. Add QualityWatcher module to `cypress/plugins/index.{ts|js}:`
+
+```javascript
+import * as qualitywatcher from "@qualitywatcher/cypress-reporter";
+
+module.exports = (on, config) => {
+  // Call the report method with on and config as arguments
+  qualitywatcher.report(on, config);
+};
+```
+
+or
 
 ```javascript
 const qualitywatcher = require("@qualitywatcher/cypress-reporter");
@@ -40,7 +57,49 @@ module.exports = (on, config) => {
    4. Click the "Generate API Key" button
    5. Copy your API Key, we will use this for posting the results
 
-Your Cypress tests should include the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
+3a. Create a .env file in the root of your project and add API KEY, or update an existing .env
+
+```shell
+touch .env
+echo "QUALITYWATCHER_API_KEY=[API Key]" >> .env
+
+# For windows:
+# type NUL > .env
+# echo QUALITYWATCHER_API_KEY=[API Key]  > .env
+```
+
+3b. Install [dotenv](https://www.npmjs.com/package/dotenv) and require it in your plugin file (if you don't have this already)
+
+> cypress/plugins/index.{ts|js}
+
+```js
+/// <reference types="cypress" />
+// ***********************************************************
+// This example plugins/index.js can be used to load plugins
+//
+// You can change the location of this file or turn off loading
+// the plugins file with the 'pluginsFile' configuration option.
+//
+// You can read more here:
+// https://on.cypress.io/plugins-guide
+// ***********************************************************
+
+// This function is called when a project is opened or re-opened (e.g. due to
+// the project's config changing)
+
+require("dotenv").config();
+import * as qualitywatcher from "@qualitywatcher/cypress-reporter";
+
+/**
+ * @type {Cypress.PluginConfig}
+ */
+// eslint-disable-next-line no-unused-vars
+module.exports = (on, config) => {
+  qualitywatcher.report(on, config);
+};
+```
+
+> Your Cypress tests should include the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
 
 ```Javascript
 // Good:
