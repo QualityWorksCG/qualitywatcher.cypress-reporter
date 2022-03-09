@@ -1,13 +1,14 @@
 {
   "name": "@qualitywatcher/cypress-reporter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Cypress Reporter for QualityWatcher",
   "main": "lib/index.js",
   "scripts": {
     "build": "npx tsc",
+    "postbuild": "cp package.json README.md lib",
     "test:local": "npm run build && cypress run",
     "test:mocha": "npm run build && mocha",
-    "release": "np"
+    "release": "npm publish ./lib"
   },
   "author": "Dimitri Harding",
   "license": "ISC",
