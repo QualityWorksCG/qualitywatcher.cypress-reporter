@@ -110,10 +110,10 @@ export const report = (
     const stats = { startedTestsAt, endedTestsAt, totalDuration };
 
     reporterOptions = options?.reporterOptions;
-    reporterOptions["include_all_cases"] = reporterOptions.hasOwnProperty(
-      "include_all_cases"
+    reporterOptions["includeAllCases"] = reporterOptions.hasOwnProperty(
+      "includeAllCases"
     )
-      ? reporterOptions?.include_all_cases
+      ? reporterOptions?.includeAllCases
       : true;
 
     const tests = runs.map((run) => run.tests).flat();
@@ -161,7 +161,7 @@ export const report = (
       const suites = [...new Set(results.map((result) => result?.suite_id))];
       const body = {
         projectId: Number(reporterOptions?.projectId),
-        include_all_cases: reporterOptions?.include_all_cases,
+        include_all_cases: reporterOptions?.includeAllCases,
         testRunName: `${
           reporterOptions?.testRunName
         } automated test run - ${new Date()}`,

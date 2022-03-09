@@ -41,23 +41,25 @@ module.exports = (on, config) => {
 2. Add reporterOptions to your `cypress.json`:
 
 ```json
-...
-"reporterOptions": {
-  "testRunName": "Test Run Name",
-  "description": "Test Run Description",
-  "projectId": 12,
-  "include_all_cases": true
+{
+  "reporterOptions": {
+    "testRunName": "Test Run Name",
+    "description": "Test Run Description",
+    "projectId": 12,
+    "includeAllCases": true
+  }
 }
 ```
 
 3. Get API Key from QualityWatcher
+
    1. Go to your QualityWatcher account
    2. Hover over your profile avatar and click "Profile Settings"
    3. Select the "API Key" menu item
    4. Click the "Generate API Key" button
    5. Copy your API Key, we will use this for posting the results
 
-3a. Create a .env file in the root of your project and add API KEY, or update an existing .env
+4. Create a .env file in the root of your project and add API KEY, or update an existing .env
 
 ```shell
 touch .env
@@ -68,7 +70,7 @@ echo "QUALITYWATCHER_API_KEY=[API Key]" >> .env
 # echo QUALITYWATCHER_API_KEY=[API Key]  > .env
 ```
 
-3b. Install [dotenv](https://www.npmjs.com/package/dotenv) and require it in your plugin file (if you don't have this already)
+5. Install [dotenv](https://www.npmjs.com/package/dotenv) and require it in your plugin file (if you don't have this already)
 
 > cypress/plugins/index.{ts|js}
 
