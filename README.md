@@ -40,6 +40,14 @@ module.exports = (on, config) => {
 
 2. Add reporterOptions to your `cypress.json`:
 
+**testRunName**: _string_ test run title
+
+**description**: _string_ test run description
+
+**projectId**: _number_ project ID with which the tests are related
+
+**includeAllCases** _boolean_ (optional:true) whether or not to include all test cases from each suite used
+
 ```json
 {
   "reporterOptions": {
