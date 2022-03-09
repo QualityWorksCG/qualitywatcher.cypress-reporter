@@ -1,13 +1,13 @@
 {
   "name": "@qualitywatcher/cypress-reporter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Cypress Reporter for QualityWatcher",
   "main": "lib/index.js",
   "scripts": {
     "build": "npx tsc",
-    "postbuild": "cp package.json README.md lib",
     "test:local": "npm run build && cypress run",
     "test:mocha": "npm run build && mocha",
+    "prerelease": "cp package.json README.md lib",
     "release": "npm publish ./lib"
   },
   "author": "Dimitri Harding",
@@ -18,7 +18,7 @@
     "fast-safe-stringify": "^2.1.1"
   },
   "devDependencies": {
-    "@qualitywatcher/cypress-reporter": "file:qualitywatcher-cypress-reporter-0.0.1.tgz",
+    "@qualitywatcher/cypress-reporter": "file:qualitywatcher-cypress-reporter-0.0.3.tgz",
     "@types/mocha": "^9.1.0",
     "@types/node": "^16.11.13",
     "chai": "^4.3.4",
@@ -31,5 +31,10 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "cypress",
+    "qualitywatcher",
+    "reporter"
+  ]
 }
