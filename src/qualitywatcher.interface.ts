@@ -25,3 +25,10 @@ export interface QualityWatcherOptions {
   password: string;
   projectId: number;
 }
+
+export interface ReportOptions {
+  projectId: number;
+  testRunName: string;
+  description: string;
+  includeAllCases: boolean;
+}

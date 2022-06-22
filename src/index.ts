@@ -3,6 +3,7 @@ import {
   QualityWatcherResult,
   Status,
   QualityWatcherPayload,
+  ReportOptions,
 } from "./qualitywatcher.interface";
 import Cypress from "cypress";
 const QualityWatcher = require("./qualitywatcher");
@@ -88,10 +89,10 @@ function getSuiteAndCaseIds(title) {
 
 export const report = (
   on: Cypress.PluginEvents,
-  config: Cypress.PluginConfig
+  config: Cypress.PluginConfig & { reporterOptions: ReportOptions }
 ) => {
   const results: QualityWatcherResult[] = [];
-  let reporterOptions;
+  let reporterOptions = config.reporterOptions;
 
   on("before:run", () => {
     validateOptions(config);
@@ -109,7 +110,6 @@ export const report = (
 
     const stats = { startedTestsAt, endedTestsAt, totalDuration };
 
-    reporterOptions = options?.reporterOptions;
     reporterOptions["includeAllCases"] = reporterOptions.hasOwnProperty(
       "includeAllCases"
     )
@@ -125,7 +125,6 @@ export const report = (
     const qualityWatcherOptions = {
       password: process.env.QUALITYWATCHER_API_KEY,
       projectId: reporterOptions?.projectId,
-      url: reporterOptions?.url,
     };
 
     const qualitywatcher = new QualityWatcher(qualityWatcherOptions);
