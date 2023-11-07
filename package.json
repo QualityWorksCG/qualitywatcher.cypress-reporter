@@ -1,6 +1,6 @@
 {
   "name": "@qualitywatcher/cypress-reporter",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Cypress Reporter for QualityWatcher",
   "main": "lib/index.js",
   "scripts": {
