@@ -171,7 +171,6 @@ export const report = (
     }
 
     function getPayload(): QualityWatcherPayload {
-      const suites = [];
       const body = {
         projectId: Number(reporterOptions?.projectId),
         include_all_cases: reporterOptions?.includeAllCases,
@@ -181,7 +180,9 @@ export const report = (
           } \nEnd: ${stats?.endedTestsAt} \nDuration: ${msToTime(
             stats?.totalDuration
           )}`,
-        suites,
+        suites: Array.from(
+          new Set(results.map(result => result.suite_id).filter(Boolean))
+        ),
         results: results,
       };
       return body;
