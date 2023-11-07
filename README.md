@@ -16,7 +16,27 @@ yarn add -D @qualitywatcher/cypress-reporter
 
 ## Usage
 
-1. Add QualityWatcher module to `cypress/plugins/index.{ts|js}:`
+1. Add QualityWatcher module to `cypress.config.{ts|js}` or `cypress/plugins/index.{ts|js}`:
+
+#### Define Config Setup 
+
+```javascript
+const { defineConfig } = require("cypress");
+const qualitywatcher = require("@qualitywatcher/cypress-reporter");
+
+module.exports = defineConfig({
+  // ...
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      // Call the report method with on and config as arguments
+      qualitywatcher.report(on, config);
+    },
+  },
+});
+```
+
+#### Plugin Setup
 
 ```javascript
 import * as qualitywatcher from "@qualitywatcher/cypress-reporter";
@@ -38,7 +58,8 @@ module.exports = (on, config) => {
 };
 ```
 
-2. Add reporterOptions to your `cypress.json`:
+
+2. Add reporterOptions to your `cypress.config.{ts|js}` or `cypress.json`:
 
 **testRunName**: _string_ test run title
 
@@ -48,12 +69,37 @@ module.exports = (on, config) => {
 
 **includeAllCases** _boolean_ (optional:true) whether or not to include all test cases from each suite used
 
+> cypress.config.{ts|js}
+
+```javascript
+const { defineConfig } = require("cypress");
+const qualitywatcher = require("@qualitywatcher/cypress-reporter");
+
+module.exports = defineConfig({
+  reporterOptions: {
+    testRunName: "Test Run Name",
+    description: "Test Run Description",
+    projectId: 1,
+    includeAllCases: true,
+  },
+  e2e: {
+    //...
+  },
+});
+
+```
+
+
+or 
+
+> cypress.json
+
 ```json
 {
   "reporterOptions": {
     "testRunName": "Test Run Name",
     "description": "Test Run Description",
-    "projectId": 12,
+    "projectId": 1,
     "includeAllCases": true
   }
 }
