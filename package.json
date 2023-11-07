@@ -1,6 +1,6 @@
 {
   "name": "@qualitywatcher/cypress-reporter",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Cypress Reporter for QualityWatcher",
   "main": "lib/index.js",
   "scripts": {
@@ -13,7 +13,6 @@
   "author": "Dimitri Harding",
   "license": "ISC",
   "dependencies": {
-    "@qualitywatcher/cypress-reporter": "^0.0.6",
     "axios": "^0.24.0",
     "colors": "^1.4.0",
     "fast-safe-stringify": "^2.1.1"

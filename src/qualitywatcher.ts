@@ -38,6 +38,7 @@ class QualityWatcher {
         )}`
       );
     } catch (error) {
+      console.log(JSON.stringify(error, null, 2));
       logger(colors.red(`-  There was an error publishing results: ${error}`));
       if (error?.response) {
         const { data } = error?.response;
