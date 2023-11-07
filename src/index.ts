@@ -58,17 +58,31 @@ function cleanTest(test, status, browserInfo) {
   let { duration } = attempts[attempts.length - 1];
   title = title[title.length - 1];
   const { suite_id, test_id } = getSuiteAndCaseIds(title);
+
+  const testCaseDetails = {
+    comment: displayError
+      ? `${displayError} \n\n\n ${browserInfo} \n\n **Code:**\n\n----- \n\n` +
+      "```js\n" +
+      `${test?.body}`
+      : `${title} \n${browserInfo}`,
+    status: status,
+    time: duration || 0,
+  };
+
   if (suite_id && test_id) {
     return {
       suite_id: suite_id,
       test_id: test_id,
-      comment: displayError
-        ? `${displayError} \n\n\n ${browserInfo} \n\n **Code:**\n\n----- \n\n` +
-          "```js\n" +
-          `${test?.body}`
-        : `${title} \n${browserInfo}`,
-      status: status,
-      time: duration || 0,
+      ...testCaseDetails,
+    }
+  } else {
+    return {
+      case: {
+        suiteTitle: "Cypress tests",
+        testCaseTitle: title,
+        steps: test?.body,
+      },
+      ...testCaseDetails,
     };
   }
 }
@@ -157,18 +171,16 @@ export const report = (
     }
 
     function getPayload(): QualityWatcherPayload {
-      const suites = [...new Set(results.map((result) => result?.suite_id))];
+      const suites = [];
       const body = {
         projectId: Number(reporterOptions?.projectId),
         include_all_cases: reporterOptions?.includeAllCases,
-        testRunName: `${
-          reporterOptions?.testRunName
-        } automated test run - ${new Date()}`,
-        description: `${reporterOptions?.description} \nStart: ${
-          stats?.startedTestsAt
-        } \nEnd: ${stats?.endedTestsAt} \nDuration: ${msToTime(
-          stats?.totalDuration
-        )}`,
+        testRunName: `${reporterOptions?.testRunName
+          } automated test run - ${new Date()}`,
+        description: `${reporterOptions?.description} \nStart: ${stats?.startedTestsAt
+          } \nEnd: ${stats?.endedTestsAt} \nDuration: ${msToTime(
+            stats?.totalDuration
+          )}`,
         suites,
         results: results,
       };

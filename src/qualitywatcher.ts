@@ -11,9 +11,10 @@ class QualityWatcher {
   private options: QualityWatcherOptions;
 
   constructor(options: QualityWatcherOptions) {
+    const apiEnvirontment = process.env.QUALITYWATCHER_API_ENVIRONMENT || "prod";
     this.options = options;
     this.url =
-      "https://api.qualitywatcher.com/prod/nimble/v1/test-runner/add-automated-test-execution";
+      `https://api.qualitywatcher.com/${apiEnvirontment}/nimble/v1/test-runner/add-automated-test-execution`;
   }
 
   public async publishResults(payload: QualityWatcherPayload) {
@@ -33,22 +34,22 @@ class QualityWatcher {
       });
       logger(
         `${colors.grey("-  Results published: ")} ${colors.green(
-          `${response?.data?.link}`
+          `${response?.data?.link || "See QualityWatcher for details"}`
         )}`
       );
     } catch (error) {
       logger(colors.red(`-  There was an error publishing results: ${error}`));
       if (error?.response) {
         const { data } = error?.response;
-        if (data.error.code === 400) {
-          logger(colors.red(`-  Bad Request: ${data.error.message}`));
+        if (data?.error?.code === 400) {
+          logger(colors.red(`-  Bad Request: ${data?.error?.message}`));
           return;
         } else {
-          logger(colors.red(`-  ${data.error.message}`));
+          logger(colors.red(`-  ${data?.error?.message}`));
           return;
         }
       } else {
-        if (error.status === 500) {
+        if (error?.status === 500) {
           logger(colors.red(`- Ensure that your API key is correct.`));
           return;
         }

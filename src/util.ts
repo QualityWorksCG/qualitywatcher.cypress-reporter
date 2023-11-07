@@ -24,7 +24,6 @@ export const getBrowserInfo = (testResults) => {
   return `
 
 **Browser Info:**
-
 -----
 > ${browserName}(${browserVersion}) on ${osName}(${osVersion})
 > Cypress: ${cypressVersion}`;

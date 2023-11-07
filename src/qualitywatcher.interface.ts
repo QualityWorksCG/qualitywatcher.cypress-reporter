@@ -6,11 +6,16 @@ export enum Status {
 }
 
 export interface QualityWatcherResult {
-  suite_id: number;
-  test_id: number;
+  suite_id?: number;
+  test_id?: number;
   comment: String;
   status: Status;
   time: number;
+  case?: {
+    suiteTitle: String;
+    testCaseTitle: String;
+    steps: String;
+  }
 }
 
 export interface QualityWatcherPayload {

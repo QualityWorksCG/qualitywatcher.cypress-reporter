@@ -6,3 +6,6 @@ node_modules
 Reports
 scripts.*
 qualitywatcher-cypress-reporter-*
+example
+.DS_Store
+test
