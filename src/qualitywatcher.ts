@@ -38,15 +38,14 @@ class QualityWatcher {
         )}`
       );
     } catch (error) {
-      console.log(JSON.stringify(error, null, 2));
       logger(colors.red(`-  There was an error publishing results: ${error}`));
       if (error?.response) {
         const { data } = error?.response;
-        if (data?.error?.code === 400) {
-          logger(colors.red(`-  Bad Request: ${data?.error?.message}`));
+        if (data?.code === 400) {
+          logger(colors.red(`-  Bad Request: ${data?.error}`));
           return;
         } else {
-          logger(colors.red(`-  ${data?.error?.message}`));
+          logger(colors.red(`-  ${data?.error}`));
           return;
         }
       } else {
