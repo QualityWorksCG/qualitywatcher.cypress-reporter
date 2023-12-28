@@ -39,8 +39,10 @@ export const formatComment = (displayError, browserInfo, test, title) => {
   if (displayError) {
     formattedResult += `<p>${displayError}</p>`;
     formattedResult += `<div>${browserInfo}</div>`;
-    formattedResult += '<strong>Code:</strong><hr />';
-    formattedResult += `<pre><code class="language-js">${test?.body}</code></pre>`;
+    if (test?.body) {
+      formattedResult += '<strong>Code:</strong><hr />';
+      formattedResult += `<pre><code class="language-js">${test?.body}</code></pre>`;
+    }
   } else {
     formattedResult += `<p>${title}</p>`;
     formattedResult += `<div>${browserInfo}</div>`;
