@@ -59,7 +59,7 @@ module.exports = (on, config) => {
 ```
 
 
-2. Add reporterOptions to your `cypress.config.{ts|js}` or `cypress.json`:
+2. Add minimum reporterOptions to your `cypress.config.{ts|js}` or `cypress.json`:
 
 **testRunName**: _string_ test run title
 
@@ -71,16 +71,21 @@ module.exports = (on, config) => {
 
 > cypress.config.{ts|js}
 
+> NOTE: You will be adding options to a qualitywatcher key in reporterOptions
+
 ```javascript
 const { defineConfig } = require("cypress");
 const qualitywatcher = require("@qualitywatcher/cypress-reporter");
 
 module.exports = defineConfig({
   reporterOptions: {
-    testRunName: "Test Run Name",
-    description: "Test Run Description",
-    projectId: 1,
-    includeAllCases: true,
+    qualitywatcher: {
+      testRunName: "Test Run Name",
+      description: "Test Run Description",
+      projectId: 1,
+      includeAllCases: true,
+      //... use more options
+    },
   },
   e2e: {
     //...
@@ -97,13 +102,32 @@ or
 ```json
 {
   "reporterOptions": {
-    "testRunName": "Test Run Name",
-    "description": "Test Run Description",
-    "projectId": 1,
-    "includeAllCases": true
+    "qualitywatcher": {
+        "testRunName": "Test Run Name",
+         "description": "Test Run Description",
+        "projectId": 1,
+        "includeAllCases": true
+    }
   }
 }
 ```
+
+Full reporter options
+
+| Option                | Required | Description                                           |
+|-----------------------|----------|-------------------------------------------------------|
+| projectId             | Yes      | The ID of the project.                                |
+| testRunName           | Yes      | The name of the test run.                             |
+| description           | Yes      | A description of the test run.                        |
+| includeAllCases       | Yes      | Whether to include all test cases                     |
+| complete              | No       | If true, marks the test run as complete.              |
+| includeCaseWithoutId  | No       | Include test cases even if they don't have an ID.     |
+| report                | No       | If true, generates a report.                          |
+| ignoreSkipped         | No       | If true, skipped tests will be ignored.               |
+| generateShareableLink | No       | If true, generates a shareable link for the report.   |
+| parentSuiteTitle      | No       | The title of the parent test suite.                   |
+| screenshotFolder      | No       | The folder where screenshots are stored.              |
+| uploadScreenshot      | No       | If true, uploads screenshots with the report.         |
 
 3. Get API Key from QualityWatcher
 
@@ -155,7 +179,11 @@ module.exports = (on, config) => {
 };
 ```
 
-> Your Cypress tests should include the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
+> If you don't have any tests in QualityWatcher you can still push your results and create new tests by enabling `includeCaseWithoutId` in your reporterOptions.
+
+OR
+
+> If you have existing test cases ensure that your Cypress tests includes the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
 
 ```Javascript
 // Good:
