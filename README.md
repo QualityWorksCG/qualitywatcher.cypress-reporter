@@ -69,6 +69,8 @@ module.exports = (on, config) => {
 
 **includeAllCases** _boolean_ (optional:true) whether or not to include all test cases from each suite used
 
+**report** _boolean_ (optional) whether or not to send results to QualityWatcher
+
 > cypress.config.{ts|js}
 
 > NOTE: You will be adding options to a qualitywatcher key in reporterOptions
@@ -84,7 +86,14 @@ module.exports = defineConfig({
       description: "Test Run Description",
       projectId: 1,
       includeAllCases: true,
-      //... use more options
+      report: true,
+      //... use more optional options
+      complete: false,
+      ignoreSkipped: true,
+      generateShareableLink: true,
+      parentSuiteTitle: "Smoke suite",
+      screenshotFolder: "cypress/screenshots",
+      uploadScreenshot: true,
     },
   },
   e2e: {
@@ -106,7 +115,14 @@ or
         "testRunName": "Test Run Name",
          "description": "Test Run Description",
         "projectId": 1,
-        "includeAllCases": true
+        "includeAllCases": true,
+        "report": true,
+        "complete": false,
+        "ignoreSkipped": true,
+        "generateShareableLink": true,
+        "parentSuiteTitle": "Smoke suite",
+        "screenshotFolder": "cypress/screenshots",
+        "uploadScreenshot": true,
     }
   }
 }
@@ -121,11 +137,11 @@ Full reporter options
 | description           | Yes      | A description of the test run.                        |
 | includeAllCases       | Yes      | Whether to include all test cases                     |
 | complete              | No       | If true, marks the test run as complete.              |
-| includeCaseWithoutId  | No       | Include test cases even if they don't have an ID.     |
-| report                | No       | If true, generates a report.                          |
+| includeCaseWithoutId  | No       | Include test cases even if they don't have an IDs.    |
+| report                | No       | If true, send results to QualityWatcher.              |
 | ignoreSkipped         | No       | If true, skipped tests will be ignored.               |
 | generateShareableLink | No       | If true, generates a shareable link for the report.   |
-| parentSuiteTitle      | No       | The title of the parent test suite.                   |
+| parentSuiteTitle      | No       | The suite where test cases without IDs will be added. |
 | screenshotFolder      | No       | The folder where screenshots are stored.              |
 | uploadScreenshot      | No       | If true, uploads screenshots with the report.         |
 
