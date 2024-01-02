@@ -17,7 +17,7 @@ class QualityWatcher {
 
   constructor(options: QualityWatcherOptions & Partial<ReportOptions>) {
     const apiEnvironment = process.env.QUALITYWATCHER_API_ENVIRONMENT || "prod";
-    const signedEndpoint = process.env.QUALITYWATCHER_SIGNED_URL_ENDPOINT || "https://7eibozqj8a.execute-api.us-east-1.amazonaws.com/prod/nimble/v1/import-management/getSignedUrl";
+    const signedEndpoint = process.env.QUALITYWATCHER_SIGNED_URL_ENDPOINT || "https://api.qualitywatcher.com/nimble/v1/import-management/getSignedUrl-public";
     this.options = options;
     this.url = `https://api.qualitywatcher.com/${apiEnvironment}/nimble/v1/test-runner/add-automated-test-execution`;
     this.signedUrl = signedEndpoint;
