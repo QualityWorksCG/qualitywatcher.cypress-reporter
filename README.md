@@ -86,8 +86,9 @@ module.exports = defineConfig({
       description: "Test Run Description",
       projectId: 1,
       includeAllCases: true,
-      report: true,
       //... use more optional options
+      report: true,
+      includeCaseWithoutId: true,
       complete: false,
       ignoreSkipped: true,
       generateShareableLink: true,
@@ -113,10 +114,11 @@ or
   "reporterOptions": {
     "qualitywatcher": {
         "testRunName": "Test Run Name",
-         "description": "Test Run Description",
+        "description": "Test Run Description",
         "projectId": 1,
         "includeAllCases": true,
         "report": true,
+        "includeCaseWithoutId": true,
         "complete": false,
         "ignoreSkipped": true,
         "generateShareableLink": true,
@@ -135,9 +137,9 @@ Full reporter options
 | projectId             | Yes      | The ID of the project.                                |
 | testRunName           | Yes      | The name of the test run.                             |
 | description           | Yes      | A description of the test run.                        |
-| includeAllCases       | Yes      | Whether to include all test cases                     |
+| includeAllCases       | Yes      | Whether to include all test cases from any suite that at least one automated result belongs to in the created run.                     |
 | complete              | No       | If true, marks the test run as complete.              |
-| includeCaseWithoutId  | No       | Include test cases even if they don't have an IDs.    |
+| includeCaseWithoutId  | No       | Include test cases even if they don't have Suite and Case IDs mapping, this will create new test case/s in QualityWatcher from results.    |
 | report                | No       | If true, send results to QualityWatcher.              |
 | ignoreSkipped         | No       | If true, skipped tests will be ignored.               |
 | generateShareableLink | No       | If true, generates a shareable link for the report.   |
