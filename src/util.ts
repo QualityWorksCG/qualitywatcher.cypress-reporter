@@ -83,3 +83,7 @@ export const getMimeType = (filePath: string): string => {
       return 'application/octet-stream'; // Generic byte stream
   }
 }
+
+export const shouldNotRun = (report: boolean | undefined) => {
+  return typeof report !== 'boolean' || report === false || report == null
+}

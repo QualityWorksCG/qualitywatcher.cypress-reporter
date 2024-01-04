@@ -7,7 +7,7 @@ import {
 } from "./qualitywatcher.interface";
 import Cypress from "cypress";
 import { findScreenshotsInDirectory } from "./util";
-import { logger, msToTime, getBrowserInfo, formatComment } from "./util";
+import { logger, msToTime, getBrowserInfo, formatComment, shouldNotRun } from "./util";
 const QualityWatcher = require("./qualitywatcher");
 const REGEX_SUITE_AND_TEST_ID = /\bS(\d+)C(\d+)\b/g;
 
@@ -38,7 +38,7 @@ function checkForEnvironmentalVariables() {
   }
 }
 
-function cleanTest(test, status, browserInfo, rOptions: ReportOptions, screenshots: string[]) {
+function cleanTest(test, status, browserInfo, rOptions: ReportOptions, screenshots: string[]): QualityWatcherResult {
   let { title, attempts, displayError } = test;
   let { duration } = attempts[attempts.length - 1];
   const parent = rOptions?.parentSuiteTitle ? rOptions?.parentSuiteTitle : Array.isArray(title) ? title[0] : 'Cypress tests'
@@ -98,13 +98,16 @@ export const report = (
   let screenshots;
 
   on("before:run", () => {
-    if (reporterOptions.report === false) return;
+    if (shouldNotRun(reporterOptions?.report)) {
+      logger(`Skipping QualityWatcher reporter since "reporterOptions.qualitywatcher.report" is false or undefined.`);
+      return;
+    }
     validateOptions(config);
     checkForEnvironmentalVariables();
   });
 
   on("after:run", (testResults) => {
-    if (reporterOptions?.report === false) return;
+    if (shouldNotRun(reporterOptions?.report)) return;
     const {
       runs,
       startedTestsAt,
@@ -154,7 +157,11 @@ export const report = (
       const browserInfo = getBrowserInfo(testResults);
 
       if (state === Status.Passed || state === Status.Failed || state === Status.Pending) {
-        results.push(cleanTest(test, state, browserInfo, reporterOptions, screenshots));
+        const result = cleanTest(test, state, browserInfo, reporterOptions, screenshots);
+        // check if test has suite_id and test_id and if not, check if case is included means includeCaseWithoutId is true
+        if ((result?.suite_id && result?.test_id) || result?.case) {
+          results.push(result);
+        }
       }
     }
 
