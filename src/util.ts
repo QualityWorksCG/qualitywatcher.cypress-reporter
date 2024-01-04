@@ -1,4 +1,6 @@
 import stringify from "fast-safe-stringify";
+import fs from "fs";
+import path from "path";
 
 export const logger = (message) => {
   let messageOut =
@@ -18,13 +20,70 @@ export const msToTime = (ms) => {
 };
 
 export const getBrowserInfo = (testResults) => {
-  const { browserName, browserVersion, osName, osVersion, cypressVersion } =
-    testResults;
+  const { browserName, browserVersion, osName, osVersion, cypressVersion } = testResults;
 
   return `
-
-**Browser Info:**
------
-> ${browserName}(${browserVersion}) on ${osName}(${osVersion})
-> Cypress: ${cypressVersion}`;
+    <div>
+      <strong>Browser Info:</strong>
+      <hr />
+      <blockquote>
+        ${browserName} (${browserVersion}) on ${osName} (${osVersion})<br />
+        Cypress: ${cypressVersion}
+      </blockquote>
+    </div>`;
 };
+
+export const formatComment = (displayError, browserInfo, test, title) => {
+  let formattedResult = '';
+
+  if (displayError) {
+    formattedResult += `<p>${displayError}</p>`;
+    formattedResult += `<div>${browserInfo}</div>`;
+    if (test?.body) {
+      formattedResult += '<strong>Code:</strong><hr />';
+      formattedResult += `<pre><code class="language-js">${test?.body}</code></pre>`;
+    }
+  } else {
+    formattedResult += `<p>${title}</p>`;
+    formattedResult += `<div>${browserInfo}</div>`;
+  }
+
+  return formattedResult;
+}
+
+
+
+export const findScreenshotsInDirectory = (directory) => {
+  let screenshots = [];
+  const files = fs.readdirSync(directory, { withFileTypes: true });
+
+  for (const file of files) {
+    const fullPath = path.join(directory, file.name);
+    if (file.isDirectory()) {
+      screenshots = screenshots.concat(findScreenshotsInDirectory(fullPath));
+    } else if (file.isFile() && file.name.endsWith('.png')) {
+      screenshots.push(fullPath);
+    }
+  }
+  return screenshots;
+}
+
+export const getMimeType = (filePath: string): string => {
+  const ext = path.extname(filePath).toLowerCase();
+  switch (ext) {
+    case '.png':
+      return 'image/png';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.gif':
+      return 'image/gif';
+    // ... add other file types as needed
+    default:
+      return 'application/octet-stream'; // Generic byte stream
+  }
+}
+
+export const shouldNotRun = (report: boolean | undefined) => {
+  return typeof report !== 'boolean' || report === false || report == null
+}

@@ -1,42 +1,59 @@
 import {
   QualityWatcherOptions,
   QualityWatcherPayload,
+  ReportOptions,
 } from "./qualitywatcher.interface";
-import * as Axios from "axios";
+import axios from "axios";
 import colors from "colors/safe";
-import { logger } from "./util";
+import { logger, getMimeType } from "./util";
+import { v4 as uuidv4 } from 'uuid';
+import fs from "fs";
+import path from "path";
 
 class QualityWatcher {
-  private url: String;
-  private options: QualityWatcherOptions;
+  private url: string;
+  private options: QualityWatcherOptions & Partial<ReportOptions>;
+  private signedUrl: string;
 
-  constructor(options: QualityWatcherOptions) {
-    const apiEnvirontment = process.env.QUALITYWATCHER_API_ENVIRONMENT || "prod";
+  constructor(options: QualityWatcherOptions & Partial<ReportOptions>) {
+    const apiEnvironment = process.env.QUALITYWATCHER_API_ENVIRONMENT || "prod";
+    const signedEndpoint = process.env.QUALITYWATCHER_SIGNED_URL_ENDPOINT || "https://api.qualitywatcher.com/nimble/v1/import-management/getSignedUrl-public";
     this.options = options;
-    this.url =
-      `https://api.qualitywatcher.com/${apiEnvirontment}/nimble/v1/test-runner/add-automated-test-execution`;
+    this.url = `https://api.qualitywatcher.com/${apiEnvironment}/nimble/v1/test-runner/add-automated-test-execution`;
+    this.signedUrl = signedEndpoint;
+  }
+
+  private async uploadAttachment(result: any, attachmentPath: string) {
+    logger(colors.grey("-  Uploading attachment..."));
+    const attachmentUrl = await this.processAttachments(result, attachmentPath);
+    logger(colors.grey("-  Attachment uploaded!"));
+    return attachmentUrl;
   }
 
   public async publishResults(payload: QualityWatcherPayload) {
-    logger(
-      colors.green(colors.bold(`(${colors.underline("QualityWatcher")})\n`))
-    );
-    logger(colors.grey("-  Publishing results..."));
+    logger(colors.green(colors.bold(`(${colors.underline("QualityWatcher")})\n`)));
+
+    if (this.options.uploadScreenshot) {
+      for (const result of payload.results) {
+        if (result.attachments && result.attachments.length > 0) {
+          const attachmentUrls = await Promise.all(result.attachments.map(attachment => this.uploadAttachment(result, attachment)));
+          result.attachments = attachmentUrls;
+        }
+      }
+    }
+
     try {
-      const response = await Axios.default.request({
-        method: "post",
-        url: `${this.url}`,
+      logger(colors.grey("-  Publishing results..."));
+      const response = await axios.post(this.url, payload, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bear ${this.options.password}`,
         },
-        data: JSON.stringify(payload),
       });
-      logger(
-        `${colors.grey("-  Results published: ")} ${colors.green(
-          `${response?.data?.link || "See QualityWatcher for details"}`
-        )}`
-      );
+      logger(`${colors.grey("-  Results published: ")} ${colors.green(response?.data?.link || "See QualityWatcher for details")}`);
+      if (response?.data?.shareableReportLink) {
+        logger(`${colors.grey("-  Shareable Report Link: ")} ${colors.green(response?.data?.shareableReportLink || "See QualityWatcher for details")}`);
+      }
     } catch (error) {
       logger(colors.red(`-  There was an error publishing results: ${error}`));
       if (error?.response) {
@@ -56,6 +73,66 @@ class QualityWatcher {
       }
     }
   }
+
+  private async upload(signedUrl: string, filePath: string) {
+    try {
+      const file = await fs.promises.readFile(filePath);
+      const fileType = getMimeType(filePath);
+
+      const response = await axios.put(signedUrl, file, {
+        headers: {
+          'Content-Type': fileType,
+        },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Failed to upload with status ${response.status}`);
+      }
+
+      return {
+        data: signedUrl.split('?')[0],
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error.message,
+      };
+    }
+  }
+
+  private async processAttachments(result: any, attachmentPath: string) {
+    const attachmentId = result?.suite_id && result?.test_id ? `${result.suite_id}-${result.test_id}` : "";
+    const uploadName = `attachment-${attachmentId}-${uuidv4()}`;
+    const fileType = getMimeType(attachmentPath);
+
+    if (attachmentPath) {
+      try {
+        const response = await axios.post(this.signedUrl, {
+          fileName: uploadName,
+          contentType: fileType,
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.options.password}`,
+          },
+        });
+
+        const data = response.data;
+        if (data.signedUrl) {
+          const fullAttachmentPath = path.resolve(attachmentPath);
+          const response = await this.upload(data.signedUrl, fullAttachmentPath);
+
+          if (response.data) {
+            return response.data;
+          }
+        }
+      } catch (error) {
+        console.log({ error });
+        return null;
+      }
+    }
+  }
 }
 
-module.exports = QualityWatcher;
+export = QualityWatcher;

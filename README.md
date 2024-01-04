@@ -59,7 +59,7 @@ module.exports = (on, config) => {
 ```
 
 
-2. Add reporterOptions to your `cypress.config.{ts|js}` or `cypress.json`:
+2. Add minimum reporterOptions to your `cypress.config.{ts|js}` or `cypress.json`:
 
 **testRunName**: _string_ test run title
 
@@ -69,7 +69,11 @@ module.exports = (on, config) => {
 
 **includeAllCases** _boolean_ (optional:true) whether or not to include all test cases from each suite used
 
+**report** _boolean_ (optional) whether or not to send results to QualityWatcher
+
 > cypress.config.{ts|js}
+
+> NOTE: You will be adding options to a qualitywatcher key in reporterOptions
 
 ```javascript
 const { defineConfig } = require("cypress");
@@ -77,10 +81,21 @@ const qualitywatcher = require("@qualitywatcher/cypress-reporter");
 
 module.exports = defineConfig({
   reporterOptions: {
-    testRunName: "Test Run Name",
-    description: "Test Run Description",
-    projectId: 1,
-    includeAllCases: true,
+    qualitywatcher: {
+      testRunName: "Test Run Name",
+      description: "Test Run Description",
+      projectId: 1,
+      includeAllCases: true,
+      //... use more optional options
+      report: true,
+      includeCaseWithoutId: true,
+      complete: false,
+      ignoreSkipped: true,
+      generateShareableLink: true,
+      parentSuiteTitle: "Smoke suite",
+      screenshotFolder: "cypress/screenshots",
+      uploadScreenshot: true,
+    },
   },
   e2e: {
     //...
@@ -97,13 +112,40 @@ or
 ```json
 {
   "reporterOptions": {
-    "testRunName": "Test Run Name",
-    "description": "Test Run Description",
-    "projectId": 1,
-    "includeAllCases": true
+    "qualitywatcher": {
+        "testRunName": "Test Run Name",
+        "description": "Test Run Description",
+        "projectId": 1,
+        "includeAllCases": true,
+        "report": true,
+        "includeCaseWithoutId": true,
+        "complete": false,
+        "ignoreSkipped": true,
+        "generateShareableLink": true,
+        "parentSuiteTitle": "Smoke suite",
+        "screenshotFolder": "cypress/screenshots",
+        "uploadScreenshot": true,
+    }
   }
 }
 ```
+
+Full reporter options
+
+| Option                | Required | Description                                           |
+|-----------------------|----------|-------------------------------------------------------|
+| projectId             | Yes      | The ID of the project.                                |
+| testRunName           | Yes      | The name of the test run.                             |
+| description           | Yes      | A description of the test run.                        |
+| includeAllCases       | Yes      | Whether to include all test cases from any suite that at least one automated result belongs to in the created run.                     |
+| complete              | No       | If true, marks the test run as complete.              |
+| includeCaseWithoutId  | No       | Include test cases even if they don't have Suite and Case IDs mapping, this will create new test case/s in QualityWatcher from results.    |
+| report                | No       | If true, send results to QualityWatcher.              |
+| ignoreSkipped         | No       | If true, skipped tests will be ignored.               |
+| generateShareableLink | No       | If true, generates a shareable link for the report.   |
+| parentSuiteTitle      | No       | The suite where test cases without IDs will be added. |
+| screenshotFolder      | No       | The folder where screenshots are stored.              |
+| uploadScreenshot      | No       | If true, uploads screenshots with the report.         |
 
 3. Get API Key from QualityWatcher
 
@@ -155,7 +197,11 @@ module.exports = (on, config) => {
 };
 ```
 
-> Your Cypress tests should include the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
+> If you don't have any tests in QualityWatcher you can still push your results and create new tests by enabling `includeCaseWithoutId` in your reporterOptions.
+
+OR
+
+> If you have existing test cases ensure that your Cypress tests includes the ID of your QualityWatcher test case and suite that it belongs to. Make sure the suite and test case IDs are distinct from your test titles:
 
 ```Javascript
 // Good:
