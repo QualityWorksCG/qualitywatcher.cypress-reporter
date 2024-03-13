@@ -4,9 +4,10 @@
   "description": "Cypress Reporter for QualityWatcher",
   "main": "lib/index.js",
   "bin": {
-    "@qualitywatcher/cypress-reporter-merge": "./lib/merge-results.js"
+    "qualitywatcher-cypress-reporter-merge": "lib/merge-results.js"
   },
   "scripts": {
+    "test": "cypress run",
     "build": "npx tsc",
     "test:local": "npm run build && cypress run",
     "test:mocha": "npm run build && mocha",

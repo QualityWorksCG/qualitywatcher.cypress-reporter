@@ -234,7 +234,7 @@ reporterOptions: {
 2. Execute merge binary when all parallel jobs are done:
 
 ```shell
-npx @qualitywatcher/cypress-reporter-merge
+npx qualitywatcher-cypress-reporter-merge
 ```
 
 ## License
