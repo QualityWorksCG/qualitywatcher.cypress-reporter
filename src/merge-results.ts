@@ -3,7 +3,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import { cosmiconfig } from 'cosmiconfig';
+import { cosmiconfigSync } from 'cosmiconfig';
 import QualityWatcher from './qualitywatcher';
 
 dotenv.config();
@@ -24,8 +24,25 @@ async function mergeResults() {
         payload = rest;
     }
 
-    // Read QualityWatcher options from cypress.json or cypress.config.js
-    const explorer = cosmiconfig('cypress');
+    // Read QualityWatcher options from cypress.json or cypress.config.js|.ts
+    // Custom loader for handling .js and .ts configuration files
+    const customJsLoader = async (filePath) => {
+        const config = await import(filePath); // Dynamically import the JS/TS file
+        return config.default ?? config; // Support both default and named exports
+    };
+
+    const explorer = cosmiconfigSync('cypress', {
+        searchPlaces: [
+            'cypress.json',
+            'cypress.config.js',
+            'cypress.config.ts',
+        ],
+        loaders: {
+            '.js': customJsLoader,
+            '.ts': customJsLoader,
+        },
+    });
+
     const config = await explorer.search();
     const reporterOptions = config?.config?.reporterOptions?.qualitywatcher;
 
@@ -34,6 +51,10 @@ async function mergeResults() {
         password: process.env.QUALITYWATCHER_API_KEY,
         parallel: false,
     };
+
+    if (combinedResults.length === 0) {
+        throw new Error('No results found to merge');
+    }
 
     const qualitywatcher = new QualityWatcher(qualityWatcherOptions);
     payload.results = combinedResults; // Update results in the last file's payload
