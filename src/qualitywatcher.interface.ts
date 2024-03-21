@@ -50,4 +50,5 @@ export interface ReportOptions {
   parentSuiteTitle?: string;
   screenshotFolder?: string;
   uploadScreenshot?: boolean;
+  parallel?: boolean;
 }

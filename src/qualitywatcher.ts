@@ -33,6 +33,12 @@ class QualityWatcher {
   public async publishResults(payload: QualityWatcherPayload) {
     logger(colors.green(colors.bold(`(${colors.underline("QualityWatcher")})\n`)));
 
+    if (this.options.parallel) {
+      logger(colors.grey("-  Parallel execution enabled. Results will be published after all tests are completed."));
+      await this.saveResults(payload);
+      return;
+    }
+
     if (this.options.uploadScreenshot) {
       for (const result of payload.results) {
         if (result.attachments && result.attachments.length > 0) {
@@ -54,21 +60,38 @@ class QualityWatcher {
       if (response?.data?.shareableReportLink) {
         logger(`${colors.grey("-  Shareable Report Link: ")} ${colors.green(response?.data?.shareableReportLink || "See QualityWatcher for details")}`);
       }
+      return {
+        data: response.data,
+        error: null,
+      }
     } catch (error) {
       logger(colors.red(`-  There was an error publishing results: ${error}`));
       if (error?.response) {
         const { data } = error?.response;
         if (data?.code === 400) {
           logger(colors.red(`-  Bad Request: ${data?.error}`));
-          return;
+          return {
+            data: null,
+            error: data?.error || "Bad Request",
+          }
+        } else if (error?.response?.status === 500) {
+          logger(colors.red(`- Ensure that your API key is correct.`));
+          return {
+            data: null,
+            error: "Ensure that your API key is correct.",
+          }
         } else {
           logger(colors.red(`-  ${data?.error}`));
-          return;
+          return {
+            data: null,
+            error: data?.error || "Error",
+          }
         }
       } else {
-        if (error?.status === 500) {
-          logger(colors.red(`- Ensure that your API key is correct.`));
-          return;
+        logger(colors.red(`- Ensure that your API key is correct.`));
+        return {
+          data: null,
+          error: "Ensure that your API key is correct.",
         }
       }
     }
@@ -132,6 +155,15 @@ class QualityWatcher {
         return null;
       }
     }
+  }
+
+  public async saveResults(payload: QualityWatcherPayload) {
+    const resultsDir = path.join(process.cwd(), 'qualitywatcher-results');
+    await fs.promises.mkdir(resultsDir, { recursive: true });
+    const filename = `results-${Date.now()}.json`;
+    const filePath = path.join(resultsDir, filename);
+    await fs.promises.writeFile(filePath, JSON.stringify(payload, null, 2));
+    logger(colors.grey(`- Results saved locally to: ${filePath}`));
   }
 }
 

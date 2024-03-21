@@ -95,6 +95,7 @@ module.exports = defineConfig({
       parentSuiteTitle: "Smoke suite",
       screenshotFolder: "cypress/screenshots",
       uploadScreenshot: true,
+      parallel: false,
     },
   },
   e2e: {
@@ -125,6 +126,7 @@ or
         "parentSuiteTitle": "Smoke suite",
         "screenshotFolder": "cypress/screenshots",
         "uploadScreenshot": true,
+        "parallel": false,
     }
   }
 }
@@ -146,6 +148,7 @@ Full reporter options
 | parentSuiteTitle      | No       | The suite where test cases without IDs will be added. |
 | screenshotFolder      | No       | The folder where screenshots are stored.              |
 | uploadScreenshot      | No       | If true, uploads screenshots with the report.         |
+| parallel              | No       | If true, save results locally to be merged later when doing parallel testing.      |
 
 3. Get API Key from QualityWatcher
 
@@ -211,6 +214,27 @@ it("Can authenticate a valid user [S12C1234]", ...
 // Bad:
 it("S12C123Can authenticate a valid user", ...
 it("Can authenticate a valid userS5C123", ...
+```
+
+## Parallelization
+
+When doing parallel testing, you need to merge results from different Cypress runs to get a complete report in QualityWatcher. 
+
+1. Enable parallel in your qualitywatcher reporter options
+```js
+reporterOptions: {
+  qualitywatcher: {
+    //...
+      parallel: true
+    //...
+  }
+}
+```
+
+2. Execute merge binary when all parallel jobs are done:
+
+```shell
+npx qualitywatcher-cypress-reporter-merge
 ```
 
 ## License
