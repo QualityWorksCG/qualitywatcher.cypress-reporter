@@ -2,9 +2,9 @@
   "name": "@qualitywatcher/cypress-reporter",
   "version": "1.0.6-beta.0",
   "description": "Cypress Reporter for QualityWatcher",
-  "main": "lib/index.js",
+  "main": "index.js",
   "bin": {
-    "qualitywatcher-cypress-reporter-merge": "lib/merge-results.js"
+    "qualitywatcher-cypress-reporter-merge": "merge-results.js"
   },
   "scripts": {
     "test": "cypress run",
