@@ -13,6 +13,8 @@
     "test:mocha": "npm run build && mocha",
     "prerelease": "cp package.json README.md lib",
     "release": "npm publish ./lib",
+    "prerelease-beta": "npm version prepatch --preid=beta",
+    "release-beta": "npm run prerelease-beta && npm run build && npm publish ./lib --tag beta",
     "merge-results": "npm run build && node ./lib/merge-results.js"
   },
   "author": "Dimitri Harding",
@@ -22,7 +24,8 @@
     "colors": "^1.4.0",
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.4.5",
-    "fast-safe-stringify": "^2.1.1"
+    "fast-safe-stringify": "^2.1.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",
