@@ -141,6 +141,7 @@ export const report = (
     const qualitywatcher = new QualityWatcher({
       ...qualityWatcherOptions,
       uploadScreenshot: reporterOptions?.uploadScreenshot || false,
+      parallel: reporterOptions?.parallel || false,
     });
 
     const payload = getPayload();
