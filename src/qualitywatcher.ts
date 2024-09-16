@@ -33,12 +33,6 @@ class QualityWatcher {
   public async publishResults(payload: QualityWatcherPayload) {
     logger(colors.green(colors.bold(`(${colors.underline("QualityWatcher")})\n`)));
 
-    if (this.options.parallel) {
-      logger(colors.grey("-  Parallel execution enabled. Results will be published after all tests are completed."));
-      await this.saveResults(payload);
-      return;
-    }
-
     if (this.options.uploadScreenshot) {
       for (const result of payload.results) {
         if (result.attachments && result.attachments.length > 0) {
@@ -47,6 +41,13 @@ class QualityWatcher {
         }
       }
     }
+
+    if (this.options.parallel) {
+      logger(colors.grey("-  Parallel execution enabled. Results will be published after all tests are completed."));
+      await this.saveResults(payload);
+      return;
+    }
+
 
     try {
       logger(colors.grey("-  Publishing results..."));
