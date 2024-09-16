@@ -127,7 +127,7 @@ class QualityWatcher {
 
   private async processAttachments(result: any, attachmentPath: string) {
     const attachmentId = result?.suite_id && result?.test_id ? `${result.suite_id}-${result.test_id}` : "";
-    const uploadName = `attachment-${attachmentId}-${uuidv4()}`;
+    const uploadName = `attachment-${attachmentId}-${uuidv4()}.png`;
     const fileType = getMimeType(attachmentPath);
 
     if (attachmentPath) {
